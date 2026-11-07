@@ -147,7 +147,98 @@
       note: "고사양 게임은 그래픽카드 비중을 높인 구성입니다. 낮은 예산에서는 옵션 조절이 필요할 수 있으며, 구매 전 플레이할 게임의 권장 사양을 확인하세요."
     }
   };
+  // 참고용 사양입니다.
+  // 게임 업데이트에 따라 변경될 수 있으므로 공식 안내도 확인하세요.
+  const gameRequirements = {
+    lol: {
+      minimum: [
+        "CPU: Intel Core i3-530 / AMD A6-3650",
+        "그래픽카드: GeForce 9600 GT / Radeon HD 6570",
+        "메모리: 2GB"
+      ],
+      recommended: [
+        "CPU: Intel Core i5-3300 / AMD Ryzen 3 1200",
+        "그래픽카드: GeForce GTX 560 / Radeon HD 6950",
+        "메모리: 4GB"
+      ],
+      note: "높은 주사율로 플레이하려면 권장 사양보다 여유 있는 구성이 필요할 수 있어요."
+    },
 
+    valorant: {
+      minimum: [
+        "CPU: Intel Core i3-540 / AMD Athlon 200GE",
+        "그래픽카드: Intel HD 4000 / Radeon R5 200",
+        "메모리: 4GB"
+      ],
+      recommended: [
+        "CPU: Intel Core i3-4150 / AMD Ryzen 3 1200",
+        "그래픽카드: GeForce GT 730 / Radeon R7 240",
+        "메모리: 4GB"
+      ],
+      note: "144Hz 이상의 모니터를 활용하려면 더 높은 성능을 고려하세요. 운영체제별 보안 요구사항도 확인해야 해요."
+    },
+
+    pubg: {
+      minimum: [
+        "CPU: Intel Core i5-4430 / AMD FX-6300",
+        "그래픽카드: GeForce GTX 960 2GB / Radeon R7 370 2GB",
+        "메모리: 8GB"
+      ],
+      recommended: [
+        "CPU: Intel Core i5-6600K / AMD Ryzen 5 1600",
+        "그래픽카드: GeForce GTX 1060 3GB / Radeon RX 580 4GB",
+        "메모리: 16GB"
+      ],
+      note: "해상도와 옵션에 따라 성능 차이가 커요. 위 사양만으로 높은 프레임이 보장되지는 않아요."
+    },
+
+    aaa: {
+      minimum: [
+        "게임마다 최소 사양이 달라요.",
+        "플레이할 게임의 스팀 상점 페이지를 확인하세요."
+      ],
+      recommended: [
+        "게임마다 권장 사양이 달라요.",
+        "목표 해상도와 레이 트레이싱 사용 여부도 확인하세요."
+      ],
+      note: "‘고사양 스팀 게임’은 여러 게임을 묶은 항목이라 공통 최소·권장 사양을 정할 수 없어요."
+    }
+  };
+
+  function renderRequirements(gameKey) {
+    const spec = gameRequirements[gameKey];
+
+    if (!spec) return "";
+
+    return `
+      <section style="
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid #cbd5e1;
+      ">
+        <h3>🎮 게임 최소·권장 사양</h3>
+
+        <h4>최소 사양</h4>
+        <ul>
+          ${spec.minimum.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+
+        <h4>권장 사양</h4>
+        <ul>
+          ${spec.recommended.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+
+        <p>${spec.note}</p>
+
+        <p class="note">
+          위 정보는 참고용 요약입니다. 최신 공식 사양을 실시간으로
+          조회한 정보가 아니며, 업데이트로 달라질 수 있습니다.
+          저장 공간·운영체제·DirectX 등 전체 요구사항은
+          구매 및 설치 전에 게임 공식 사이트에서 확인하세요.
+        </p>
+      </section>
+    `;
+  }
   document.getElementById("finder").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -181,7 +272,7 @@
       </ul>
 
       <p><strong>💡 추천 이유</strong><br>${gamePlan.note}</p>
-
+      ${renderRequirements(game.value)}
       <p class="note">
         예산 구간별 참고용 예시이며 실시간 견적이 아닙니다.
         현재 판매 가격에 따라 선택 예산을 초과할 수 있습니다.

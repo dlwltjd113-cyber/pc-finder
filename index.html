@@ -4,9 +4,164 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PC 파인더</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      background: #f1f5f9;
+      color: #172033;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 640px;
+      margin: auto;
+      padding: 28px;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #00000010;
+    }
+
+    h1 { margin-top: 0; }
+    p { line-height: 1.7; }
+
+    label {
+      display: block;
+      margin-top: 22px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 26px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { background: #1d4ed8; }
+
+    #result {
+      margin-top: 26px;
+      padding: 20px;
+      background: #eff6ff;
+      border-radius: 12px;
+    }
+
+    #result h2 { margin-top: 0; }
+    li { margin-bottom: 12px; line-height: 1.5; }
+    .note { color: #526176; font-size: 14px; }
+  </style>
 </head>
 <body>
-  <h1>PC 파인더</h1>
-  <p>게임·프로그램에 필요한 사양과 예산별 PC 구성을 찾아보세요.</p>
+  <main>
+    <h1>🖥️ PC 파인더</h1>
+    <p>게임과 예산을 선택하고 추천 PC 구성을 확인해 보세요.</p>
+
+    <form id="finder">
+      <label for="game">주로 하는 게임</label>
+      <select id="game">
+        <option value="lol">리그 오브 레전드</option>
+        <option value="valorant">발로란트</option>
+        <option value="pubg">배틀그라운드</option>
+        <option value="aaa">고사양 스팀 게임</option>
+      </select>
+
+      <label for="budget">본체 예산</label>
+      <select id="budget">
+        <option value="entry">약 70만~100만 원</option>
+        <option value="mid">약 100만~150만 원</option>
+        <option value="high">약 150만~200만 원</option>
+      </select>
+
+      <button type="submit">추천 구성 보기</button>
+    </form>
+
+    <section id="result" aria-live="polite" hidden></section>
+
+    <p class="note">
+      본체 기준의 참고용 구성입니다. 모니터·주변기기·운영체제 비용은
+      별도이며, 실제 가격과 성능은 구매 시점과 게임 설정에 따라 달라집니다.
+    </p>
+  </main>
+
+  <script>
+    const builds = {
+      entry: {
+        cpu: "AMD Ryzen 5 5600",
+        gpu: "AMD Radeon RX 6600",
+        ram: "DDR4 16GB (8GB × 2)",
+        ssd: "NVMe SSD 500GB~1TB",
+        board: "B550 메인보드",
+        power: "정격 550W 이상 권장"
+      },
+      mid: {
+        cpu: "AMD Ryzen 5 7500F",
+        gpu: "NVIDIA GeForce RTX 4060",
+        ram: "DDR5 32GB (16GB × 2)",
+        ssd: "NVMe SSD 1TB",
+        board: "B650 메인보드",
+        power: "정격 600W 이상 권장"
+      },
+      high: {
+        cpu: "AMD Ryzen 5 7500F",
+        gpu: "NVIDIA GeForce RTX 4070 SUPER",
+        ram: "DDR5 32GB (16GB × 2)",
+        ssd: "NVMe SSD 1TB",
+        board: "B650 메인보드",
+        power: "정격 750W 이상 권장"
+      }
+    };
+
+    const gameNotes = {
+      lol: "롤은 비교적 가벼운 게임입니다. 높은 주사율을 목표로 한다면 CPU 성능도 중요해요.",
+      valorant: "발로란트는 높은 프레임을 목표로 할수록 CPU와 메모리 성능이 중요해요.",
+      pubg: "배틀그라운드는 그래픽 설정에 따라 성능 차이가 커요. 여유가 있다면 RAM 32GB를 권장해요.",
+      aaa: "고사양 게임은 게임별 요구 사양이 크게 달라요. 해상도와 그래픽 옵션에 맞춰 GPU를 선택하세요."
+    };
+
+    document.getElementById("finder").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const game = document.getElementById("game");
+      const budget = document.getElementById("budget");
+      const build = builds[budget.value];
+      const result = document.getElementById("result");
+
+      result.innerHTML = `
+        <h2>추천 PC 구성</h2>
+        <p><strong>${game.options[game.selectedIndex].text}</strong> /
+          ${budget.options[budget.selectedIndex].text}</p>
+        <ul>
+          <li><strong>CPU:</strong> ${build.cpu}</li>
+          <li><strong>그래픽카드:</strong> ${build.gpu}</li>
+          <li><strong>메모리:</strong> ${build.ram}</li>
+          <li><strong>저장장치:</strong> ${build.ssd}</li>
+          <li><strong>메인보드:</strong> ${build.board}</li>
+          <li><strong>파워:</strong> ${build.power}</li>
+        </ul>
+        <p>${gameNotes[game.value]}</p>
+        <p class="note">
+          예산 구간별 예시이며 실시간 견적이 아닙니다.
+          케이스·CPU 쿨러 비용과 부품 호환성도 구매 전에 확인하세요.
+          위 구성은 특정 프레임이나 게임 실행 성능을 보장하지 않습니다.
+        </p>
+      `;
+
+      result.hidden = false;
+    });
+  </script>
 </body>
 </html>

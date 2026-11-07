@@ -3,287 +3,1271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PC 파인더</title>
+  <title>게임별 PC 구성 추천</title>
+
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --background: #f3f5f9;
+      --card: #ffffff;
+      --text: #222b3a;
+      --muted: #637083;
+      --primary: #3563e9;
+      --border: #e2e7ef;
+      --soft: #f7f8fc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      padding: 40px 16px;
-      background: #f1f5f9;
-      color: #172033;
-      font-family: Arial, sans-serif;
+      padding: 32px 16px;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      line-height: 1.65;
     }
 
     main {
-      max-width: 640px;
+      max-width: 980px;
       margin: auto;
-      padding: 28px;
-      background: white;
-      border-radius: 18px;
-      box-shadow: 0 8px 30px #00000010;
     }
 
-    h1 { margin-top: 0; }
-    p { line-height: 1.7; }
+    .card {
+      margin-bottom: 20px;
+      padding: 26px;
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: 0 4px 18px #00000008;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.4;
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 34px);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 23px;
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+
+    a {
+      color: var(--primary);
+      overflow-wrap: anywhere;
+    }
 
     label {
       display: block;
-      margin-top: 22px;
       margin-bottom: 8px;
       font-weight: bold;
     }
 
-    select, button {
+    select, input, button {
+      font: inherit;
+    }
+
+    select, input {
       width: 100%;
-      padding: 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 16px;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #ccd4e1;
+      border-radius: 9px;
+      background: white;
+      color: var(--text);
     }
 
     button {
-      margin-top: 26px;
+      padding: 12px 18px;
       border: none;
-      background: #2563eb;
+      border-radius: 9px;
+      background: var(--primary);
       color: white;
       font-weight: bold;
       cursor: pointer;
     }
 
-    button:hover { background: #1d4ed8; }
-
-    #result {
-      margin-top: 26px;
-      padding: 20px;
-      background: #eff6ff;
-      border-radius: 12px;
+    button:hover {
+      background: #254dcc;
     }
 
-    #result h2 { margin-top: 0; }
-    li { margin-bottom: 12px; line-height: 1.5; }
-    .note { color: #526176; font-size: 14px; }
+    button.secondary {
+      background: #eaf0ff;
+      color: #2447aa;
+    }
+
+    button.secondary:hover {
+      background: #dce6ff;
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #91afff;
+      outline-offset: 3px;
+    }
+
+    .controls,
+    .requirements,
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .submit-button {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .notice {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .notice li + li {
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #edf2ff;
+      color: #3154b1;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .badge.warning {
+      background: #fff3dc;
+      color: #875500;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: #edf2ff;
+      color: #284a9e;
+    }
+
+    .message.warning {
+      background: #fff5e4;
+      color: #825400;
+    }
+
+    .message.error {
+      background: #fff0f0;
+      color: #a53030;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    caption {
+      padding-bottom: 12px;
+      text-align: left;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 14px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    thead th {
+      background: var(--soft);
+      font-size: 14px;
+    }
+
+    .parts-table {
+      min-width: 560px;
+    }
+
+    .parts-table th:first-child {
+      width: 16%;
+    }
+
+    .price-cell {
+      width: 180px;
+    }
+
+    .price-input {
+      min-width: 140px;
+      text-align: right;
+    }
+
+    .spec,
+    .summary-box {
+      padding: 18px;
+      border-radius: 12px;
+      background: var(--soft);
+    }
+
+    .spec p {
+      margin: 9px 0;
+    }
+
+    .summary-grid {
+      margin-top: 20px;
+    }
+
+    .summary-label {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .summary-value {
+      display: block;
+      margin-top: 5px;
+      font-size: 23px;
+      font-weight: bold;
+    }
+
+    .price-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .date-field {
+      flex: 1 1 220px;
+      max-width: 320px;
+    }
+
+    .section-heading {
+      margin-top: 26px;
+    }
+
+    .source-list {
+      padding-left: 20px;
+    }
+
+    .source-list li + li {
+      margin-top: 8px;
+    }
+
+    .small {
+      font-size: 13px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 12px;
+      }
+
+      .card {
+        padding: 19px;
+      }
+
+      .controls,
+      .requirements,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .price-tools {
+        align-items: stretch;
+      }
+
+      .date-field {
+        max-width: none;
+      }
+
+      .price-tools button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
+
 <body>
   <main>
-    <h1>🖥️ PC 파인더</h1>
-    <p>게임과 예산을 선택하고 추천 PC 구성을 확인해 보세요.</p>
+    <section class="card">
+      <span class="badge">구매 참고용 · 실시간 견적 아님</span>
+      <h1 style="margin-top: 14px;">🎮 게임별 PC 구성 추천</h1>
 
-    <form id="finder">
-      <label for="game">주로 하는 게임</label>
-      <select id="game">
-        <option value="lol">리그 오브 레전드</option>
-        <option value="valorant">발로란트</option>
-        <option value="pubg">배틀그라운드</option>
-        <option value="aaa">고사양 스팀 게임</option>
-      </select>
+      <p>
+        게임과 예산을 선택하면 참고용 PC 구성과 게임 사양을 보여드립니다.
+        실제 판매 가격을 입력하면 부품 합계도 확인할 수 있습니다.
+      </p>
 
-      <label for="budget">본체 예산</label>
-      <select id="budget">
-        <option value="entry">약 70만~100만 원</option>
-        <option value="mid">약 100만~150만 원</option>
-        <option value="high">약 150만~200만 원</option>
-      </select>
+      <form id="recommendForm">
+        <div class="controls">
+          <div>
+            <label for="game">게임 선택</label>
+            <select id="game" name="game">
+              <option value="lol">리그 오브 레전드</option>
+              <option value="valorant">발로란트</option>
+              <option value="pubg">배틀그라운드</option>
+            </select>
+          </div>
 
-      <button type="submit">추천 구성 보기</button>
-    </form>
+          <div>
+            <label for="budget">예산 기준 선택</label>
+            <select id="budget" name="budget">
+              <option value="80">80만 원 기준</option>
+              <option value="120">120만 원 기준</option>
+              <option value="180">180만 원 기준</option>
+            </select>
+          </div>
+        </div>
 
-    <section id="result" aria-live="polite" hidden></section>
+        <button type="submit" class="submit-button">
+          추천 구성 보기
+        </button>
+      </form>
 
-    <p class="note">
-      본체 기준의 참고용 구성입니다. 모니터·주변기기·운영체제 비용은
-      별도이며, 실제 가격과 성능은 구매 시점과 게임 설정에 따라 달라집니다.
-    </p>
+      <p class="notice">
+        예산은 비교 기준입니다. 실제 구매 가능 여부는 입력한 가격과
+        재고에 따라 달라집니다.
+      </p>
+
+      <p id="formMessage" class="message error" role="alert" hidden></p>
+    </section>
+
+    <section id="result" hidden>
+      <div class="card">
+        <h2 id="resultTitle"></h2>
+
+        <div>
+          <span class="badge">예시 구성</span>
+          <span class="badge warning">호환성 최종 미검증</span>
+        </div>
+
+        <p id="buildDescription"></p>
+
+        <div class="table-wrap">
+          <table class="parts-table">
+            <caption>
+              부품별 참고 구성 — 가격은 직접 확인한 원화 금액을 입력하세요.
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">부품</th>
+                <th scope="col">추천 모델·선택 조건</th>
+                <th scope="col">참고 가격(원)</th>
+              </tr>
+            </thead>
+            <tbody id="parts"></tbody>
+          </table>
+        </div>
+
+        <p class="notice">
+          메모리·저장장치·메인보드·파워·케이스 등은 선택 조건입니다.
+          제조사와 세부 모델을 확정한 뒤 가격 및 호환성을 확인하세요.
+          아래 합계는 자동 수집한 판매가가 아니라 직접 입력한 금액입니다.
+        </p>
+
+        <div class="summary-grid" aria-live="polite" aria-atomic="true">
+          <div class="summary-box">
+            <span class="summary-label">선택한 예산 기준</span>
+            <span id="budgetAmount" class="summary-value"></span>
+          </div>
+
+          <div class="summary-box">
+            <span id="totalLabel" class="summary-label">입력 가격 합계</span>
+            <span id="totalAmount" class="summary-value"></span>
+          </div>
+        </div>
+
+        <p id="budgetStatus" class="message"></p>
+
+        <div class="price-tools">
+          <div class="date-field">
+            <label for="priceDate">가격 확인 기준일</label>
+            <input type="date" id="priceDate">
+          </div>
+
+          <button type="button" id="clearPrices" class="secondary">
+            현재 구성 가격 지우기
+          </button>
+        </div>
+
+        <p id="priceDateNotice" class="notice"></p>
+        <p id="storageStatus" class="notice" role="status"></p>
+
+        <h3 class="section-heading">추천 이유</h3>
+        <p id="reason"></p>
+        <p id="gameAdvice"></p>
+
+        <h3 class="section-heading">구매 전 확인할 사항</h3>
+        <ul id="compatibility"></ul>
+
+        <p class="notice">
+          이 구성은 벤치마크 또는 조립 검증을 완료한 판매 견적이 아닙니다.
+          특정 해상도·옵션·FPS를 보장하지 않습니다.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>게임 최소·권장 사양</h2>
+
+        <p>
+          <span id="requirementsStatus" class="badge warning"></span>
+        </p>
+
+        <div id="requirements" class="requirements"></div>
+
+        <p id="requirementsDate" class="notice"></p>
+        <p id="requirementsNote" class="notice"></p>
+
+        <h3 class="section-heading">공식 안내 확인</h3>
+        <ul id="requirementsSources" class="source-list"></ul>
+
+        <p class="notice">
+          공식 게임 사양과 이 사이트의 추천 PC 구성은 별개의 정보입니다.
+          표시된 사양은 게임 업데이트에 따라 달라질 수 있습니다.
+          구매 전 링크에서 최신 요구사항을 확인하세요.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>포함 항목과 별도 비용</h2>
+
+        <p>
+          <strong>구성에 포함:</strong>
+          CPU, 그래픽카드, 메모리, 저장장치, 메인보드, 파워,
+          CPU 쿨러, 케이스
+        </p>
+
+        <p>
+          <strong>별도 확인:</strong>
+          Windows 등 운영체제, 모니터, 키보드·마우스,
+          조립비, 배송비, 무선랜·블루투스 장치,
+          추가 팬과 케이블
+        </p>
+
+        <p class="notice">
+          기본 쿨러를 사용하는 구성은 CPU 상품의 실제 쿨러 포함 여부를
+          확인하세요. 미포함 상품이면 별도 쿨러 비용이 필요합니다.
+        </p>
+      </div>
+
+      <div class="card notice">
+        <h2>주의사항</h2>
+        <ul>
+          <li>
+            본 페이지는 실시간 판매 견적이 아닌 참고용 구성입니다.
+            오래된 제품의 재고나 가격이 불리하면 대체 제품을 비교하세요.
+          </li>
+          <li>
+            표시된 예산 안에 구매할 수 있다는 보장은 없습니다.
+            가격을 모두 입력하기 전에는 예산 충족 여부를 판단하지 않습니다.
+          </li>
+          <li>
+            CPU 소켓, 메모리 규격, BIOS, 부품 크기,
+            파워 용량과 커넥터를 실제 모델 기준으로 확인하세요.
+          </li>
+          <li>
+            게임 성능은 해상도, 그래픽 옵션, 드라이버,
+            업데이트 및 실행 중인 프로그램에 따라 달라집니다.
+          </li>
+          <li>
+            입력한 가격은 이 브라우저에 저장됩니다.
+            다른 기기와 동기화되지 않으며 브라우저 데이터 삭제 시 사라질 수 있습니다.
+          </li>
+        </ul>
+      </div>
+    </section>
   </main>
 
   <script>
-  // 예산별 기본 구성: 실시간 가격이 아닌 참고용 예시입니다.
-  const baseBuilds = {
-    entry: {
-      cpu: "AMD Ryzen 5 5600",
-      board: "B550 메인보드",
-      ssd: "NVMe SSD 1TB",
-      power: "정격 550W 이상 권장"
-    },
-    mid: {
-      cpu: "AMD Ryzen 5 7500F",
-      board: "B650 메인보드",
-      ssd: "NVMe SSD 1TB",
-      power: "정격 650W 이상 권장"
-    },
-    high: {
-      cpu: "AMD Ryzen 5 7500F",
-      board: "B650 메인보드",
-      ssd: "NVMe SSD 1TB",
-      power: "정격 750W 이상 권장"
-    }
-  };
+    "use strict";
 
-  // 게임별로 그래픽카드와 메모리를 다르게 추천합니다.
-  const gameBuilds = {
-    lol: {
-      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 16GB (8GB × 2)" },
-      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
-      high: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
-      note: "롤 위주라면 예산을 전부 쓸 필요는 없어요. 높은 예산에서도 그래픽카드를 과하게 올리기보다는 모니터나 주변기기에 예산을 남기는 구성입니다."
-    },
-    valorant: {
-      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 16GB (8GB × 2)" },
-      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
-      high: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
-      note: "발로란트 위주의 절약형 구성입니다. 높은 주사율을 목표로 한다면 그래픽카드뿐 아니라 CPU 성능과 모니터 주사율도 함께 확인하세요."
-    },
-    pubg: {
-      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 32GB (16GB × 2)" },
-      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
-      high: { gpu: "NVIDIA GeForce RTX 4070 SUPER", ram: "DDR5 32GB (16GB × 2)" },
-      note: "배틀그라운드는 메모리 여유를 고려해 32GB로 구성했어요. 해상도와 그래픽 옵션에 따라 프레임 차이가 크므로 목표 설정에 맞는 성능 확인이 필요합니다."
-    },
-    aaa: {
-      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 32GB (16GB × 2)" },
-      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
-      high: { gpu: "NVIDIA GeForce RTX 4070 SUPER", ram: "DDR5 32GB (16GB × 2)" },
-      note: "고사양 게임은 그래픽카드 비중을 높인 구성입니다. 낮은 예산에서는 옵션 조절이 필요할 수 있으며, 구매 전 플레이할 게임의 권장 사양을 확인하세요."
-    }
-  };
-  // 참고용 사양입니다.
-  // 게임 업데이트에 따라 변경될 수 있으므로 공식 안내도 확인하세요.
-  const gameRequirements = {
-    lol: {
-      minimum: [
-        "CPU: Intel Core i3-530 / AMD A6-3650",
-        "그래픽카드: GeForce 9600 GT / Radeon HD 6570",
-        "메모리: 2GB"
-      ],
-      recommended: [
-        "CPU: Intel Core i5-3300 / AMD Ryzen 3 1200",
-        "그래픽카드: GeForce GTX 560 / Radeon HD 6950",
-        "메모리: 4GB"
-      ],
-      note: "높은 주사율로 플레이하려면 권장 사양보다 여유 있는 구성이 필요할 수 있어요."
-    },
+    /*
+      게임 사양 데이터
 
-    valorant: {
-      minimum: [
-        "CPU: Intel Core i3-540 / AMD Athlon 200GE",
-        "그래픽카드: Intel HD 4000 / Radeon R5 200",
-        "메모리: 4GB"
-      ],
-      recommended: [
-        "CPU: Intel Core i3-4150 / AMD Ryzen 3 1200",
-        "그래픽카드: GeForce GT 730 / Radeon R7 240",
-        "메모리: 4GB"
-      ],
-      note: "144Hz 이상의 모니터를 활용하려면 더 높은 성능을 고려하세요. 운영체제별 보안 요구사항도 확인해야 해요."
-    },
+      기존에 작성한 참고 수치를 유지했습니다.
+      최신 공식 정보를 직접 대조하기 전에는 verified를 true로 바꾸지 마세요.
 
-    pubg: {
-      minimum: [
-        "CPU: Intel Core i5-4430 / AMD FX-6300",
-        "그래픽카드: GeForce GTX 960 2GB / Radeon R7 370 2GB",
-        "메모리: 8GB"
-      ],
-      recommended: [
-        "CPU: Intel Core i5-6600K / AMD Ryzen 5 1600",
-        "그래픽카드: GeForce GTX 1060 3GB / Radeon RX 580 4GB",
-        "메모리: 16GB"
-      ],
-      note: "해상도와 옵션에 따라 성능 차이가 커요. 위 사양만으로 높은 프레임이 보장되지는 않아요."
-    },
+      공식 정보를 확인한 뒤:
+      verified: true
+      checkedAt: "실제로 확인한 YYYY-MM-DD"
 
-    aaa: {
-      minimum: [
-        "게임마다 최소 사양이 달라요.",
-        "플레이할 게임의 스팀 상점 페이지를 확인하세요."
-      ],
-      recommended: [
-        "게임마다 권장 사양이 달라요.",
-        "목표 해상도와 레이 트레이싱 사용 여부도 확인하세요."
-      ],
-      note: "‘고사양 스팀 게임’은 여러 게임을 묶은 항목이라 공통 최소·권장 사양을 정할 수 없어요."
-    }
-  };
+      공식 권장 사양이 없는 게임은 recommended: null로 지정할 수 있습니다.
+    */
+    const gameRequirements = {
+      lol: {
+        name: "리그 오브 레전드",
+        verified: false,
+        checkedAt: null,
+        minimum: {
+          CPU: "Intel Core i3-530 / AMD A6-3650",
+          GPU: "GeForce 9600 GT / Radeon HD 6570 / Intel HD 4600",
+          RAM: "2GB",
+          저장공간: "16GB",
+          운영체제: "Windows 10 64비트"
+        },
+        recommended: {
+          CPU: "Intel Core i5-3300 / AMD Ryzen 3 1200",
+          GPU: "GeForce GTX 560 / Radeon HD 6950 / Intel UHD 630",
+          RAM: "4GB",
+          저장공간: "SSD 16GB",
+          운영체제: "Windows 11 64비트"
+        },
+        note:
+          "기존 참고 데이터를 표시합니다. 최신 운영체제, CPU 명령어 지원 및 보안 프로그램 요구사항은 공식 안내에서 다시 확인하세요.",
+        sources: [
+          {
+            label: "리그 오브 레전드 공식 고객지원 — 시스템 사양 검색",
+            url:
+              "https://support-leagueoflegends.riotgames.com/hc/ko/search?query=최소%20권장%20사양"
+          }
+        ],
+        advice:
+          "리그 오브 레전드는 비교적 가벼운 게임입니다. 높은 주사율을 목표로 한다면 CPU 성능도 중요하며, 이 게임만 한다면 상위 예산을 모두 사용할 필요는 없습니다."
+      },
 
-  function renderRequirements(gameKey) {
-    const spec = gameRequirements[gameKey];
+      valorant: {
+        name: "발로란트",
+        verified: false,
+        checkedAt: null,
+        minimum: {
+          CPU: "Intel Core i3-540 / AMD Athlon 200GE",
+          GPU: "Intel HD 4000 / Radeon R5 200",
+          RAM: "4GB",
+          그래픽메모리: "외장 GPU 사용 시 1GB 이상",
+          운영체제: "Windows 10 64비트 이상"
+        },
+        recommended: {
+          CPU: "Intel Core i3-4150 / AMD Ryzen 3 1200",
+          GPU: "GeForce GT 730 / Radeon R7 240",
+          RAM: "4GB",
+          그래픽메모리: "외장 GPU 사용 시 1GB 이상",
+          운영체제: "Windows 10 64비트 이상"
+        },
+        note:
+          "기존 참고 데이터를 표시합니다. 공식 안내의 성능 등급별 조건과 최신 Windows 빌드 요구사항을 확인하세요. Windows 11에서는 TPM 2.0과 보안 부팅 요구사항도 확인해야 합니다.",
+        sources: [
+          {
+            label: "발로란트 공식 시스템 사양",
+            url: "https://playvalorant.com/ko-kr/specs/"
+          }
+        ],
+        advice:
+          "발로란트에서 높은 프레임을 목표로 한다면 CPU 성능이 중요합니다. 모니터 주사율과 원하는 그래픽 설정을 함께 고려하세요."
+      },
 
-    if (!spec) return "";
-
-    return `
-      <section style="
-        margin-top: 24px;
-        padding-top: 16px;
-        border-top: 1px solid #cbd5e1;
-      ">
-        <h3>🎮 게임 최소·권장 사양</h3>
-
-        <h4>최소 사양</h4>
-        <ul>
-          ${spec.minimum.map(item => `<li>${item}</li>`).join("")}
-        </ul>
-
-        <h4>권장 사양</h4>
-        <ul>
-          ${spec.recommended.map(item => `<li>${item}</li>`).join("")}
-        </ul>
-
-        <p>${spec.note}</p>
-
-        <p class="note">
-          위 정보는 참고용 요약입니다. 최신 공식 사양을 실시간으로
-          조회한 정보가 아니며, 업데이트로 달라질 수 있습니다.
-          저장 공간·운영체제·DirectX 등 전체 요구사항은
-          구매 및 설치 전에 게임 공식 사이트에서 확인하세요.
-        </p>
-      </section>
-    `;
-  }
-  document.getElementById("finder").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const game = document.getElementById("game");
-    const budget = document.getElementById("budget");
-    const result = document.getElementById("result");
-
-    const gamePlan = gameBuilds[game.value];
-
-    // 예산별 기본 부품 + 게임별 부품을 합칩니다.
-    const build = {
-      ...baseBuilds[budget.value],
-      ...gamePlan[budget.value]
+      pubg: {
+        name: "배틀그라운드",
+        verified: false,
+        checkedAt: null,
+        minimum: {
+          CPU: "Intel Core i5-4430 / AMD FX-6300",
+          GPU: "GeForce GTX 960 2GB / Radeon R7 370 2GB",
+          RAM: "8GB",
+          저장공간: "40GB 이상",
+          운영체제: "Windows 10 64비트"
+        },
+        recommended: {
+          CPU: "Intel Core i5-6600K / AMD Ryzen 5 1600",
+          GPU: "GeForce GTX 1060 3GB / Radeon RX 580 4GB",
+          RAM: "16GB",
+          저장공간: "50GB 이상",
+          운영체제: "Windows 10 64비트"
+        },
+        note:
+          "기존 참고 데이터를 표시합니다. 특히 설치 용량은 업데이트로 달라질 수 있으므로 Steam의 최신 시스템 요구사항과 설치 여유 공간을 확인하세요.",
+        sources: [
+          {
+            label: "PUBG: BATTLEGROUNDS Steam — 시스템 요구사항",
+            url: "https://store.steampowered.com/app/578080/"
+          }
+        ],
+        advice:
+          "배틀그라운드는 그래픽카드와 메모리 성능의 영향을 받습니다. 높은 해상도나 높은 프레임을 목표로 한다면 예산을 늘리거나 옵션을 조정해야 할 수 있습니다."
+      }
     };
 
-    result.innerHTML = `
-      <h2>🎯 게임 맞춤 추천 구성</h2>
+    /*
+      부품 데이터
+      제조사·세부 모델이 정해지지 않은 항목은 선택 조건입니다.
+      입력 가격은 각 게임·예산 구성별로 따로 저장됩니다.
+    */
+    const components = {
+      cpu5600: "AMD Ryzen 5 5600",
+      cpu7500f: "AMD Ryzen 5 7500F",
+      cpu7600: "AMD Ryzen 5 7600",
 
-      <p>
-        <strong>${game.options[game.selectedIndex].text}</strong><br>
-        선택 예산: ${budget.options[budget.selectedIndex].text}
-      </p>
+      rx6600: "Radeon RX 6600 8GB — 제조사·세부 모델 확인",
+      rtx4060: "GeForce RTX 4060 8GB — 제조사·세부 모델 확인",
+      rtx4070s: "GeForce RTX 4070 SUPER 12GB — 제조사·세부 모델 확인",
 
-      <ul>
-        <li><strong>CPU:</strong> ${build.cpu}</li>
-        <li><strong>그래픽카드:</strong> ${build.gpu}</li>
-        <li><strong>메모리:</strong> ${build.ram}</li>
-        <li><strong>저장장치:</strong> ${build.ssd}</li>
-        <li><strong>메인보드:</strong> ${build.board}</li>
-        <li><strong>파워:</strong> ${build.power}</li>
-      </ul>
+      ddr4_16: "DDR4 16GB (8GB × 2) — 호환 목록 확인",
+      ddr4_32: "DDR4 32GB (16GB × 2) — 호환 목록 확인",
+      ddr5_32: "DDR5 32GB (16GB × 2) — 호환 목록 확인",
 
-      <p><strong>💡 추천 이유</strong><br>${gamePlan.note}</p>
-      ${renderRequirements(game.value)}
-      <p class="note">
-        예산 구간별 참고용 예시이며 실시간 견적이 아닙니다.
-        현재 판매 가격에 따라 선택 예산을 초과할 수 있습니다.
-        케이스·쿨러·조립비·운영체제 비용과 부품 호환성을
-        구매 전에 확인하세요. 특정 프레임을 보장하지 않습니다.
-      </p>
-    `;
+      ssd500: "NVMe SSD 500GB — 제조사·세부 모델 확인",
+      ssd1tb: "NVMe SSD 1TB — 제조사·세부 모델 확인",
 
-    result.hidden = false;
-    result.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-</script>
+      b550: "B550 / AM4 / DDR4 — Ryzen 5 5600 지원 BIOS 확인",
+      b650: "B650 / AM5 / DDR5 — 선택 CPU 지원 BIOS 확인",
+
+      psu550: "정격 550W 이상 — GPU 제조사 권장 용량·커넥터 확인",
+      psu600: "정격 600W 이상 — GPU 제조사 권장 용량·커넥터 확인",
+      psu750: "정격 750W 이상, ATX 3.0 이상 권장 — 커넥터 확인",
+
+      stockCooler:
+        "CPU 기본 쿨러 사용 가정 — 실제 판매 상품에 포함되어 있는지 확인",
+      am5Cooler:
+        "AM5 지원 타워형 공랭 쿨러 — 케이스 높이·메모리 간섭 확인",
+
+      case:
+        "통풍형 케이스 — 메인보드 규격·GPU 길이·쿨러 높이 확인"
+    };
+
+    const baseBuilds = {
+      80: {
+        parts: {
+          CPU: "cpu5600",
+          그래픽카드: "rx6600",
+          메모리: "ddr4_16",
+          저장장치: "ssd500",
+          메인보드: "b550",
+          파워: "psu550",
+          CPU쿨러: "stockCooler",
+          케이스: "case"
+        }
+      },
+      120: {
+        parts: {
+          CPU: "cpu7500f",
+          그래픽카드: "rtx4060",
+          메모리: "ddr5_32",
+          저장장치: "ssd1tb",
+          메인보드: "b650",
+          파워: "psu600",
+          CPU쿨러: "am5Cooler",
+          케이스: "case"
+        }
+      },
+      180: {
+        parts: {
+          CPU: "cpu7600",
+          그래픽카드: "rtx4070s",
+          메모리: "ddr5_32",
+          저장장치: "ssd1tb",
+          메인보드: "b650",
+          파워: "psu750",
+          CPU쿨러: "am5Cooler",
+          케이스: "case"
+        }
+      }
+    };
+
+    /*
+      게임·예산별 변경 사항
+      예산은 검증된 판매가가 아니라 구성 선택을 위한 기준입니다.
+    */
+    const gameBuildProfiles = {
+      lol: {
+        80: {
+          overrides: {},
+          description: "비용 우선 · FHD 게임용 예시",
+          reason:
+            "기존 AM4 플랫폼과 16GB 메모리를 활용하는 비용 우선 구성입니다. 롤 외에 즐기는 게임과 부품 가격에 따라 그래픽카드를 낮추거나 대체할 수 있습니다."
+        },
+        120: {
+          overrides: {
+            그래픽카드: "rx6600",
+            파워: "psu550"
+          },
+          description: "CPU·플랫폼 중심 · 그래픽카드 지출 절제",
+          reason:
+            "AM5 플랫폼과 32GB 메모리를 고려하되, 롤만을 위해 그래픽카드에 과도하게 지출하지 않도록 구성한 예시입니다."
+        },
+        180: {
+          overrides: {
+            그래픽카드: "rtx4060",
+            파워: "psu600"
+          },
+          description: "게임·멀티태스킹 겸용 · 예산 전액 사용 불필요",
+          reason:
+            "CPU와 메모리 여유를 확보하면서 상위 그래픽카드 지출을 줄인 구성입니다. 롤만 즐긴다면 더 저렴한 구성과 비교하는 것이 좋습니다."
+        }
+      },
+
+      valorant: {
+        80: {
+          overrides: {
+            저장장치: "ssd1tb"
+          },
+          description: "기본 게임용 · 저장 공간 여유 고려",
+          reason:
+            "비용 우선 플랫폼에 1TB 저장장치를 고려한 예시입니다. 저장장치 용량을 늘려도 프레임이 직접 증가하는 것은 아니며, 실제 합계가 예산을 넘으면 용량을 조정할 수 있습니다."
+        },
+        120: {
+          overrides: {},
+          description: "CPU 성능과 그래픽카드의 균형",
+          reason:
+            "높은 프레임을 위한 CPU 성능과 다른 게임도 고려한 외장 그래픽카드를 조합했습니다. 특정 FPS를 검증한 구성은 아닙니다."
+        },
+        180: {
+          overrides: {
+            그래픽카드: "rtx4060",
+            파워: "psu600"
+          },
+          description: "고주사율 지향 · 그래픽카드 과소비 방지",
+          reason:
+            "CPU와 메모리 중심으로 구성하고 그래픽카드 비용을 절제한 예시입니다. 발로란트만 한다면 남는 예산을 모두 본체에 사용할 필요는 없습니다."
+        }
+      },
+
+      pubg: {
+        80: {
+          overrides: {
+            메모리: "ddr4_32",
+            저장장치: "ssd1tb"
+          },
+          description: "메모리·저장 공간 보강 · 예산 초과 가능",
+          reason:
+            "메모리와 설치 여유 공간을 고려해 32GB 및 1TB로 보강한 구성입니다. 이 가격대에서는 실제 합계 확인이 특히 중요하며, 부족하면 옵션 조정이나 예산 재검토가 필요할 수 있습니다."
+        },
+        120: {
+          overrides: {},
+          description: "FHD 게임용 균형 구성",
+          reason:
+            "AM5 플랫폼, 32GB 메모리와 외장 그래픽카드를 조합한 예시입니다. 원하는 프레임이 나오는지는 동일 조건의 실제 벤치마크를 추가로 확인하세요."
+        },
+        180: {
+          overrides: {},
+          description: "QHD도 고려한 그래픽카드 중심 구성",
+          reason:
+            "상대적으로 그래픽카드에 비중을 둔 구성입니다. QHD에서의 실제 성능은 옵션과 게임 상황에 따라 달라지며, 높은 FPS를 보장하지 않습니다."
+        }
+      }
+    };
+
+    const STORAGE_KEY = "game-pc-reference-prices-v1";
+
+    const form = document.getElementById("recommendForm");
+    const gameSelect = document.getElementById("game");
+    const budgetSelect = document.getElementById("budget");
+    const result = document.getElementById("result");
+    const formMessage = document.getElementById("formMessage");
+    const priceDate = document.getElementById("priceDate");
+    const storageStatus = document.getElementById("storageStatus");
+
+    let savedPrices = loadSavedPrices();
+    let activeBuild = null;
+
+    function formatWon(value) {
+      return `${new Intl.NumberFormat("ko-KR").format(value)}원`;
+    }
+
+    function todayLocal() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    priceDate.max = todayLocal();
+
+    function isValidDate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return false;
+      }
+
+      const parsed = new Date(`${value}T00:00:00Z`);
+
+      return (
+        !Number.isNaN(parsed.getTime()) &&
+        parsed.toISOString().slice(0, 10) === value &&
+        value <= todayLocal()
+      );
+    }
+
+    function loadSavedPrices() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+
+        if (!raw) {
+          return {};
+        }
+
+        const parsed = JSON.parse(raw);
+
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          return {};
+        }
+
+        return parsed;
+      } catch {
+        return {};
+      }
+    }
+
+    function persistPrices() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPrices));
+        storageStatus.textContent =
+          "현재 구성의 입력 가격과 기준일을 이 브라우저에 저장했습니다.";
+      } catch {
+        storageStatus.textContent =
+          "브라우저 저장이 차단되었거나 저장 공간이 부족합니다. 현재 화면에서는 사용할 수 있지만 새로고침하면 입력이 사라질 수 있습니다.";
+      }
+    }
+
+    function getCurrentRecord() {
+      if (!activeBuild) {
+        return null;
+      }
+
+      const key = activeBuild.storageKey;
+      const existing = savedPrices[key];
+
+      if (
+        !existing ||
+        typeof existing !== "object" ||
+        Array.isArray(existing)
+      ) {
+        savedPrices[key] = {
+          prices: {},
+          date: ""
+        };
+      }
+
+      const record = savedPrices[key];
+
+      if (
+        !record.prices ||
+        typeof record.prices !== "object" ||
+        Array.isArray(record.prices)
+      ) {
+        record.prices = {};
+      }
+
+      if (!isValidDate(record.date)) {
+        record.date = "";
+      }
+
+      return record;
+    }
+
+    function isValidPrice(value) {
+      return (
+        Number.isSafeInteger(value) &&
+        value >= 0 &&
+        value <= 100000000
+      );
+    }
+
+    function createBuild(gameKey, budgetKey) {
+      const base = baseBuilds[budgetKey];
+      const profile = gameBuildProfiles[gameKey]?.[budgetKey];
+
+      if (!base || !profile) {
+        return null;
+      }
+
+      const parts = {
+        ...base.parts,
+        ...profile.overrides
+      };
+
+      const missingComponent = Object.values(parts).some(
+        (componentKey) => !components[componentKey]
+      );
+
+      if (missingComponent) {
+        return null;
+      }
+
+      return {
+        parts,
+        description: profile.description,
+        reason: profile.reason,
+        budgetAmount: Number(budgetKey) * 10000,
+        storageKey: `${gameKey}-${budgetKey}`
+      };
+    }
+
+    function renderRequirements(gameKey) {
+      const game = gameRequirements[gameKey];
+      const container = document.getElementById("requirements");
+      const sources = document.getElementById("requirementsSources");
+      const status = document.getElementById("requirementsStatus");
+
+      container.replaceChildren();
+      sources.replaceChildren();
+
+      if (!game) {
+        container.textContent = "등록된 게임 사양이 없습니다.";
+        return;
+      }
+
+      [
+        ["최소 사양", game.minimum],
+        ["권장 사양", game.recommended]
+      ].forEach(([title, specs]) => {
+        const section = document.createElement("section");
+        section.className = "spec";
+
+        const heading = document.createElement("h3");
+        heading.textContent = title;
+        section.appendChild(heading);
+
+        if (!specs || Object.keys(specs).length === 0) {
+          const paragraph = document.createElement("p");
+          paragraph.textContent =
+            "사양 정보가 등록되지 않았습니다. 공식 안내를 확인하세요.";
+          section.appendChild(paragraph);
+        } else {
+          Object.entries(specs).forEach(([label, value]) => {
+            const paragraph = document.createElement("p");
+            const strong = document.createElement("strong");
+
+            strong.textContent = `${label}: `;
+            paragraph.append(strong, document.createTextNode(value));
+            section.appendChild(paragraph);
+          });
+        }
+
+        container.appendChild(section);
+      });
+
+      const verified = game.verified && isValidDate(game.checkedAt);
+
+      status.textContent = verified
+        ? "등록된 확인일 기준 검수 완료"
+        : "최신 공식 사양 대조 전 · 참고 데이터";
+
+      status.className = verified ? "badge" : "badge warning";
+
+      document.getElementById("requirementsDate").textContent =
+        `공식 사양 확인일: ${
+          isValidDate(game.checkedAt) ? game.checkedAt : "미등록"
+        }`;
+
+      document.getElementById("requirementsNote").textContent =
+        game.note || "";
+
+      if (!game.sources?.length) {
+        const item = document.createElement("li");
+        item.textContent = "공식 안내 링크가 아직 등록되지 않았습니다.";
+        sources.appendChild(item);
+      } else {
+        game.sources.forEach((source) => {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+
+          link.href = source.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = `${source.label} ↗`;
+
+          item.appendChild(link);
+          sources.appendChild(item);
+        });
+      }
+    }
+
+    function renderCompatibility() {
+      const list = document.getElementById("compatibility");
+
+      const checks = [
+        "CPU와 메인보드 소켓, CPU 지원 목록 및 필요한 BIOS 버전",
+        "메인보드의 DDR4·DDR5 구분, 메모리 지원 목록과 장착 슬롯",
+        "그래픽카드 길이·두께, 케이스 내부 공간과 확장 슬롯",
+        "CPU 쿨러 장착 소켓, 쿨러 높이와 메모리 간섭",
+        "선택 GPU 제조사가 권장하는 파워 용량과 전원 커넥터",
+        "SSD 장착 규격·슬롯 및 다른 포트와의 자원 공유 여부",
+        "무선랜·블루투스 필요 여부와 메인보드 기본 지원 여부"
+      ];
+
+      list.replaceChildren();
+
+      checks.forEach((text) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        list.appendChild(item);
+      });
+    }
+
+    function renderParts() {
+      const tbody = document.getElementById("parts");
+      const record = getCurrentRecord();
+
+      tbody.replaceChildren();
+
+      Object.entries(activeBuild.parts).forEach(
+        ([label, componentKey], index) => {
+          const row = document.createElement("tr");
+          const heading = document.createElement("th");
+          const modelCell = document.createElement("td");
+          const priceCell = document.createElement("td");
+          const input = document.createElement("input");
+
+          heading.scope = "row";
+          heading.textContent = label;
+
+          modelCell.textContent = components[componentKey];
+
+          priceCell.className = "price-cell";
+          input.id = `part-price-${index}`;
+          input.className = "price-input";
+          input.type = "number";
+          input.inputMode = "numeric";
+          input.min = "0";
+          input.max = "100000000";
+          input.step = "1";
+          input.placeholder = "미등록";
+          input.setAttribute("aria-label", `${label} 참고 가격, 원`);
+          input.dataset.component = componentKey;
+
+          const saved = record.prices[componentKey];
+
+          if (isValidPrice(saved)) {
+            input.value = String(saved);
+          }
+
+          input.addEventListener("input", () => {
+            const currentRecord = getCurrentRecord();
+
+            if (input.value === "") {
+              delete currentRecord.prices[componentKey];
+              input.setCustomValidity("");
+            } else {
+              const value = Number(input.value);
+
+              if (input.validity.valid && isValidPrice(value)) {
+                currentRecord.prices[componentKey] = value;
+                input.setCustomValidity("");
+              } else {
+                delete currentRecord.prices[componentKey];
+                input.setCustomValidity(
+                  "0원 이상 1억 원 이하의 정수 금액을 입력하세요."
+                );
+              }
+            }
+
+            persistPrices();
+            updatePriceSummary();
+          });
+
+          input.addEventListener("blur", () => {
+            if (!input.validity.valid) {
+              input.reportValidity();
+            }
+          });
+
+          priceCell.appendChild(input);
+          row.append(heading, modelCell, priceCell);
+          tbody.appendChild(row);
+        }
+      );
+
+      priceDate.value = record.date;
+      updatePriceSummary();
+    }
+
+    function updatePriceSummary() {
+      if (!activeBuild) {
+        return;
+      }
+
+      const record = getCurrentRecord();
+      const componentKeys = Object.values(activeBuild.parts);
+
+      let subtotal = 0;
+      let enteredCount = 0;
+
+      componentKeys.forEach((key) => {
+        const value = record.prices[key];
+
+        if (isValidPrice(value)) {
+          subtotal += value;
+          enteredCount += 1;
+        }
+      });
+
+      const totalCount = componentKeys.length;
+      const allEntered = enteredCount === totalCount;
+      const budget = activeBuild.budgetAmount;
+
+      document.getElementById("budgetAmount").textContent =
+        formatWon(budget);
+
+      document.getElementById("totalLabel").textContent = allEntered
+        ? "전체 부품 입력 합계 · 별도 비용 제외"
+        : `입력된 부품 소계 (${enteredCount}/${totalCount})`;
+
+      document.getElementById("totalAmount").textContent =
+        enteredCount > 0 ? formatWon(subtotal) : "가격 미등록";
+
+      const status = document.getElementById("budgetStatus");
+      status.className = "message";
+
+      if (!allEntered) {
+        status.classList.add("warning");
+
+        if (subtotal > budget) {
+          status.textContent =
+            `일부 가격만 입력된 상태에서도 예산 기준을 ` +
+            `${formatWon(subtotal - budget)} 초과했습니다. ` +
+            `미등록 부품 ${totalCount - enteredCount}개의 가격과 별도 비용은 아직 포함되지 않았습니다.`;
+        } else {
+          status.textContent =
+            `미등록 부품이 ${totalCount - enteredCount}개 있습니다. ` +
+            `전체 합계와 예산 충족 여부는 아직 판단할 수 없습니다. ` +
+            `기본 포함 쿨러처럼 추가 비용이 없다면 확인 후 0원을 입력하세요.`;
+        }
+      } else if (subtotal > budget) {
+        status.classList.add("warning");
+        status.textContent =
+          `입력한 부품 합계가 예산 기준을 ` +
+          `${formatWon(subtotal - budget)} 초과합니다. ` +
+          `부품 변경 또는 예산 조정을 검토하세요. 별도 비용은 추가됩니다.`;
+      } else {
+        status.textContent =
+          `입력한 부품 합계는 예산 기준 이내이며, 차액은 ` +
+          `${formatWon(budget - subtotal)}입니다. ` +
+          `운영체제·조립비·배송비 등 별도 비용과 실제 재고는 따로 확인하세요.`;
+      }
+
+      document.getElementById("priceDateNotice").textContent =
+        record.date
+          ? `가격 기준일: ${record.date}. 입력 금액을 수정했다면 기준일도 함께 갱신하세요.`
+          : "가격 기준일이 없습니다. 실제로 가격을 확인한 날짜를 입력하세요.";
+    }
+
+    function showFormError(message) {
+      formMessage.textContent = message;
+      formMessage.hidden = false;
+      result.hidden = true;
+      activeBuild = null;
+    }
+
+    function renderRecommendation() {
+      const gameKey = gameSelect.value;
+      const budgetKey = budgetSelect.value;
+      const game = gameRequirements[gameKey];
+      const build = createBuild(gameKey, budgetKey);
+
+      if (!game) {
+        showFormError("선택한 게임 정보가 등록되어 있지 않습니다.");
+        return;
+      }
+
+      if (!build) {
+        showFormError(
+          "해당 게임·예산의 추천 구성이 아직 등록되지 않았습니다."
+        );
+        return;
+      }
+
+      formMessage.hidden = true;
+      activeBuild = build;
+
+      document.getElementById("resultTitle").textContent =
+        `${game.name} · ${budgetKey}만 원 기준 참고 구성`;
+
+      document.getElementById("buildDescription").textContent =
+        build.description;
+
+      document.getElementById("reason").textContent = build.reason;
+      document.getElementById("gameAdvice").textContent = game.advice;
+
+      renderParts();
+      renderCompatibility();
+      renderRequirements(gameKey);
+
+      storageStatus.textContent =
+        "가격은 현재 게임·예산 구성별로 저장됩니다. 다른 구성의 금액을 자동으로 가져오지 않습니다.";
+
+      result.hidden = false;
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      renderRecommendation();
+    });
+
+    [gameSelect, budgetSelect].forEach((select) => {
+      select.addEventListener("change", () => {
+        if (!result.hidden || !formMessage.hidden) {
+          renderRecommendation();
+        }
+      });
+    });
+
+    priceDate.addEventListener("change", () => {
+      if (!activeBuild) {
+        return;
+      }
+
+      if (priceDate.value && !isValidDate(priceDate.value)) {
+        priceDate.setCustomValidity(
+          "오늘 또는 이전의 올바른 날짜를 입력하세요."
+        );
+        priceDate.reportValidity();
+        return;
+      }
+
+      priceDate.setCustomValidity("");
+
+      const record = getCurrentRecord();
+      record.date = priceDate.value;
+
+      persistPrices();
+      updatePriceSummary();
+    });
+
+    document.getElementById("clearPrices").addEventListener("click", () => {
+      if (!activeBuild) {
+        return;
+      }
+
+      const confirmed = window.confirm(
+        "현재 게임·예산 구성의 입력 가격과 기준일을 지울까요?"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      savedPrices[activeBuild.storageKey] = {
+        prices: {},
+        date: ""
+      };
+
+      priceDate.setCustomValidity("");
+      persistPrices();
+      renderParts();
+
+      storageStatus.textContent =
+        "현재 구성의 입력 가격과 기준일을 지웠습니다. 다른 구성의 저장값은 유지됩니다.";
+    });
+  </script>
 </body>
 </html>

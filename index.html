@@ -98,70 +98,101 @@
   </main>
 
   <script>
-    const builds = {
-      entry: {
-        cpu: "AMD Ryzen 5 5600",
-        gpu: "AMD Radeon RX 6600",
-        ram: "DDR4 16GB (8GB × 2)",
-        ssd: "NVMe SSD 500GB~1TB",
-        board: "B550 메인보드",
-        power: "정격 550W 이상 권장"
-      },
-      mid: {
-        cpu: "AMD Ryzen 5 7500F",
-        gpu: "NVIDIA GeForce RTX 4060",
-        ram: "DDR5 32GB (16GB × 2)",
-        ssd: "NVMe SSD 1TB",
-        board: "B650 메인보드",
-        power: "정격 600W 이상 권장"
-      },
-      high: {
-        cpu: "AMD Ryzen 5 7500F",
-        gpu: "NVIDIA GeForce RTX 4070 SUPER",
-        ram: "DDR5 32GB (16GB × 2)",
-        ssd: "NVMe SSD 1TB",
-        board: "B650 메인보드",
-        power: "정격 750W 이상 권장"
-      }
+  // 예산별 기본 구성: 실시간 가격이 아닌 참고용 예시입니다.
+  const baseBuilds = {
+    entry: {
+      cpu: "AMD Ryzen 5 5600",
+      board: "B550 메인보드",
+      ssd: "NVMe SSD 1TB",
+      power: "정격 550W 이상 권장"
+    },
+    mid: {
+      cpu: "AMD Ryzen 5 7500F",
+      board: "B650 메인보드",
+      ssd: "NVMe SSD 1TB",
+      power: "정격 650W 이상 권장"
+    },
+    high: {
+      cpu: "AMD Ryzen 5 7500F",
+      board: "B650 메인보드",
+      ssd: "NVMe SSD 1TB",
+      power: "정격 750W 이상 권장"
+    }
+  };
+
+  // 게임별로 그래픽카드와 메모리를 다르게 추천합니다.
+  const gameBuilds = {
+    lol: {
+      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 16GB (8GB × 2)" },
+      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
+      high: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
+      note: "롤 위주라면 예산을 전부 쓸 필요는 없어요. 높은 예산에서도 그래픽카드를 과하게 올리기보다는 모니터나 주변기기에 예산을 남기는 구성입니다."
+    },
+    valorant: {
+      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 16GB (8GB × 2)" },
+      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
+      high: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
+      note: "발로란트 위주의 절약형 구성입니다. 높은 주사율을 목표로 한다면 그래픽카드뿐 아니라 CPU 성능과 모니터 주사율도 함께 확인하세요."
+    },
+    pubg: {
+      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 32GB (16GB × 2)" },
+      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
+      high: { gpu: "NVIDIA GeForce RTX 4070 SUPER", ram: "DDR5 32GB (16GB × 2)" },
+      note: "배틀그라운드는 메모리 여유를 고려해 32GB로 구성했어요. 해상도와 그래픽 옵션에 따라 프레임 차이가 크므로 목표 설정에 맞는 성능 확인이 필요합니다."
+    },
+    aaa: {
+      entry: { gpu: "AMD Radeon RX 6600", ram: "DDR4 32GB (16GB × 2)" },
+      mid: { gpu: "NVIDIA GeForce RTX 4060", ram: "DDR5 32GB (16GB × 2)" },
+      high: { gpu: "NVIDIA GeForce RTX 4070 SUPER", ram: "DDR5 32GB (16GB × 2)" },
+      note: "고사양 게임은 그래픽카드 비중을 높인 구성입니다. 낮은 예산에서는 옵션 조절이 필요할 수 있으며, 구매 전 플레이할 게임의 권장 사양을 확인하세요."
+    }
+  };
+
+  document.getElementById("finder").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const game = document.getElementById("game");
+    const budget = document.getElementById("budget");
+    const result = document.getElementById("result");
+
+    const gamePlan = gameBuilds[game.value];
+
+    // 예산별 기본 부품 + 게임별 부품을 합칩니다.
+    const build = {
+      ...baseBuilds[budget.value],
+      ...gamePlan[budget.value]
     };
 
-    const gameNotes = {
-      lol: "롤은 비교적 가벼운 게임입니다. 높은 주사율을 목표로 한다면 CPU 성능도 중요해요.",
-      valorant: "발로란트는 높은 프레임을 목표로 할수록 CPU와 메모리 성능이 중요해요.",
-      pubg: "배틀그라운드는 그래픽 설정에 따라 성능 차이가 커요. 여유가 있다면 RAM 32GB를 권장해요.",
-      aaa: "고사양 게임은 게임별 요구 사양이 크게 달라요. 해상도와 그래픽 옵션에 맞춰 GPU를 선택하세요."
-    };
+    result.innerHTML = `
+      <h2>🎯 게임 맞춤 추천 구성</h2>
 
-    document.getElementById("finder").addEventListener("submit", function(event) {
-      event.preventDefault();
+      <p>
+        <strong>${game.options[game.selectedIndex].text}</strong><br>
+        선택 예산: ${budget.options[budget.selectedIndex].text}
+      </p>
 
-      const game = document.getElementById("game");
-      const budget = document.getElementById("budget");
-      const build = builds[budget.value];
-      const result = document.getElementById("result");
+      <ul>
+        <li><strong>CPU:</strong> ${build.cpu}</li>
+        <li><strong>그래픽카드:</strong> ${build.gpu}</li>
+        <li><strong>메모리:</strong> ${build.ram}</li>
+        <li><strong>저장장치:</strong> ${build.ssd}</li>
+        <li><strong>메인보드:</strong> ${build.board}</li>
+        <li><strong>파워:</strong> ${build.power}</li>
+      </ul>
 
-      result.innerHTML = `
-        <h2>추천 PC 구성</h2>
-        <p><strong>${game.options[game.selectedIndex].text}</strong> /
-          ${budget.options[budget.selectedIndex].text}</p>
-        <ul>
-          <li><strong>CPU:</strong> ${build.cpu}</li>
-          <li><strong>그래픽카드:</strong> ${build.gpu}</li>
-          <li><strong>메모리:</strong> ${build.ram}</li>
-          <li><strong>저장장치:</strong> ${build.ssd}</li>
-          <li><strong>메인보드:</strong> ${build.board}</li>
-          <li><strong>파워:</strong> ${build.power}</li>
-        </ul>
-        <p>${gameNotes[game.value]}</p>
-        <p class="note">
-          예산 구간별 예시이며 실시간 견적이 아닙니다.
-          케이스·CPU 쿨러 비용과 부품 호환성도 구매 전에 확인하세요.
-          위 구성은 특정 프레임이나 게임 실행 성능을 보장하지 않습니다.
-        </p>
-      `;
+      <p><strong>💡 추천 이유</strong><br>${gamePlan.note}</p>
 
-      result.hidden = false;
-    });
-  </script>
+      <p class="note">
+        예산 구간별 참고용 예시이며 실시간 견적이 아닙니다.
+        현재 판매 가격에 따라 선택 예산을 초과할 수 있습니다.
+        케이스·쿨러·조립비·운영체제 비용과 부품 호환성을
+        구매 전에 확인하세요. 특정 프레임을 보장하지 않습니다.
+      </p>
+    `;
+
+    result.hidden = false;
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+</script>
 </body>
 </html>
